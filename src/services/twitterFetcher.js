@@ -4,9 +4,7 @@ const { TwitterApi } = require("twitter-api-v2");
 const twitterClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
 
 /**
- * Récupère le dernier tweet d'un utilisateur
- * @param {string} userId - L'ID numérique du compte Twitter
- * @returns {object|null} - Données du tweet ou null si erreur
+ * 🔁 Récupère le dernier tweet d’un utilisateur
  */
 async function getLatestTweet(userId) {
   try {
@@ -16,16 +14,14 @@ async function getLatestTweet(userId) {
       "tweet.fields": "created_at",
     });
 
-    const tweets = timeline.data.data;
-    if (!tweets || tweets.length === 0) return null;
-
-    const latest = tweets[0];
+    const tweet = timeline.data?.data?.[0];
+    if (!tweet) return null;
 
     return {
-      id: latest.id,
-      url: `https://twitter.com/i/web/status/${latest.id}`,
-      text: latest.text,
-      date: latest.created_at,
+      id: tweet.id,
+      url: `https://twitter.com/i/web/status/${tweet.id}`,
+      text: tweet.text,
+      date: tweet.created_at,
     };
   } catch (err) {
     console.error("[Twitter Fetcher] Erreur :", err);
@@ -34,9 +30,7 @@ async function getLatestTweet(userId) {
 }
 
 /**
- * ℹ️ Récupère le nom et le pseudo Twitter d’un utilisateur
- * @param {string} userId - L'ID numérique du compte Twitter
- * @returns {{ name: string, username: string } | null}
+ * ℹ️ Récupère le nom complet et pseudo Twitter
  */
 async function getUserInfo(userId) {
   try {
@@ -46,7 +40,10 @@ async function getUserInfo(userId) {
       username: user.data.username,
     };
   } catch (err) {
-    console.error(`[getUserInfo] Erreur :`, err);
+    console.error(
+      `[getUserInfo] ❌ Erreur lors de la récupération de ${userId} :`,
+      err
+    );
     return null;
   }
 }
