@@ -15,7 +15,7 @@ for (let i = 1; i <= 10; i++) {
 if (process.env.TWITTER_USER_ID) feeds.unshift(process.env.TWITTER_USER_ID);
 
 const lastTweetIds = {}; // Clé : twitterUserId → tweetId déjà posté
-const userInfoCache = {}; // Clé : twitterUserId → username (stocké au boot uniquement)
+const userInfoCache = {}; // Clé : twitterUserId → nom complet (stocké au boot uniquement)
 
 // 🔁 Initialiser le cache des pseudos Twitter une seule fois
 async function preloadUserInfos() {
@@ -24,20 +24,20 @@ async function preloadUserInfos() {
     try {
       const info = await getUserInfo(twitterUserId);
       if (info && info.name) {
-        userInfoCache[twitterUserId] = info.name; // ✅ nom complet
-        console.log(`✅ Nom détecté : ${info.name}`);
+        userInfoCache[twitterUserId] = info.name;
+        console.log(`✅ Nom détecté pour ${twitterUserId} : ${info.name}`);
       } else {
         userInfoCache[twitterUserId] = twitterUserId;
         console.warn(`⚠️ Aucun nom trouvé pour ${twitterUserId}`);
       }
     } catch (err) {
-      console.error(
-        `❌ Erreur lors du chargement de l'utilisateur ${twitterUserId} :`,
-        err
-      );
+      console.error(`❌ Erreur lors du chargement de ${twitterUserId} :`, err);
       userInfoCache[twitterUserId] = twitterUserId;
     }
   }
+
+  // 🧠 Log final de la mémoire cache
+  console.log("🧠 userInfoCache =", userInfoCache);
 }
 
 // 🔁 Vérifie tous les X minutes s’il y a de nouveaux tweets
@@ -47,9 +47,13 @@ async function checkForNewTweets() {
       const tweet = await getLatestTweet(twitterUserId);
       if (!tweet) continue;
 
+      const displayName = userInfoCache[twitterUserId] || twitterUserId;
+
+      // 🔍 Vérifie ce qui sera affiché
+      console.log(`🔍 Affichage prévu : ${displayName}`);
+
       if (lastTweetIds[twitterUserId] !== tweet.id) {
         lastTweetIds[twitterUserId] = tweet.id;
-        const displayName = userInfoCache[twitterUserId] || twitterUserId;
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
 
         await channel.send(
@@ -57,7 +61,7 @@ async function checkForNewTweets() {
         );
         console.log(`[${displayName}] Nouveau tweet posté : ${tweet.url}`);
       } else {
-        console.log(`[${userInfoCache[twitterUserId]}] Aucun nouveau tweet.`);
+        console.log(`[${displayName}] Aucun nouveau tweet.`);
       }
     } catch (err) {
       if (err.code === 429) {
