@@ -23,7 +23,13 @@ async function preloadUserInfos() {
   for (const twitterUserId of feeds) {
     try {
       const info = await getUserInfo(twitterUserId);
-      userInfoCache[twitterUserId] = info ? info.name : twitterUserId;
+      if (info && info.name) {
+        userInfoCache[twitterUserId] = info.name;
+        console.log(`✅ Nom détecté : ${info.name}`);
+      } else {
+        userInfoCache[twitterUserId] = twitterUserId;
+        console.warn(`⚠️ Aucun nom trouvé pour ${twitterUserId}`);
+      }
       console.log(`✅ @${userInfoCache[twitterUserId]} préchargé.`);
     } catch (err) {
       console.error(
