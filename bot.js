@@ -31,8 +31,8 @@ client.once("ready", () => {
   // Vérifie immédiatement au démarrage
   checkForNewTweet();
 
-  // Puis toutes les 5 minutes
-  setInterval(checkForNewTweet, 5 * 60 * 1000);
+  // Puis toutes les 15 minutes
+  setInterval(checkForNewTweet, 15 * 60 * 1000);
 });
 
 client.login(process.env.DISCORD_TOKEN);
