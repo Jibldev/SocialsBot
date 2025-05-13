@@ -33,4 +33,28 @@ async function getLatestTweet(userId) {
   }
 }
 
-module.exports = { getLatestTweet };
+/**
+ * Récupère les infos d’un utilisateur (nom complet + pseudo)
+ * @param {string} userId - L'ID numérique du compte Twitter
+ * @returns {{ name: string, username: string } | null}
+ */
+async function getUserInfo(userId) {
+  try {
+    const user = await twitterClient.v2.user(userId);
+    return {
+      name: user.data.name,
+      username: user.data.username,
+    };
+  } catch (err) {
+    console.error(
+      `[getUserInfo] Erreur lors de la récupération de ${userId} :`,
+      err
+    );
+    return null;
+  }
+}
+
+module.exports = {
+  getLatestTweet,
+  getUserInfo,
+};

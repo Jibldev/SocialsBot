@@ -23,7 +23,7 @@ async function preloadUserInfos() {
   for (const twitterUserId of feeds) {
     try {
       const info = await getUserInfo(twitterUserId);
-      userInfoCache[twitterUserId] = info ? info.username : twitterUserId;
+      userInfoCache[twitterUserId] = info ? info.name : twitterUserId;
       console.log(`✅ @${userInfoCache[twitterUserId]} préchargé.`);
     } catch (err) {
       console.error(
@@ -48,7 +48,7 @@ async function checkForNewTweets() {
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
 
         await channel.send(
-          `📢 Nouveau tweet de **@${displayName}** !\n${tweet.url}`
+          `📢 Nouveau tweet de **${displayName}** !\n${tweet.url}`
         );
         console.log(`[${displayName}] Nouveau tweet posté : ${tweet.url}`);
       } else {
