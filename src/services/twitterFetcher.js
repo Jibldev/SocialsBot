@@ -29,23 +29,6 @@ async function getLatestTweet(userId) {
   }
 }
 
-/**
- * ℹ️ Récupère le nom complet et pseudo Twitter d’un utilisateur
- */
-async function getUserInfo(userId) {
-  try {
-    const user = await twitterClient.v2.user(userId);
-    return {
-      name: user.data.name,
-      username: user.data.username,
-    };
-  } catch (err) {
-    console.error(`[getUserInfo] ❌ Erreur pour ${userId} :`, err);
-    return null;
-  }
-}
-
 module.exports = {
   getLatestTweet,
-  getUserInfo,
 };
