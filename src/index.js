@@ -1,7 +1,7 @@
-require("./keepAlive.js");
+require("./utils/keepAlive.js");
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
-const { getLatestTweet } = require("./twitterFetcher");
+const { getLatestTweet } = require("./services/twitterFetcher.js");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
