@@ -1,4 +1,4 @@
-require("/keepAlive");
+require("/KeepAlive");
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 const { getLatestTweet } = require("./twitterFetcher");
