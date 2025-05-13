@@ -24,13 +24,12 @@ async function preloadUserInfos() {
     try {
       const info = await getUserInfo(twitterUserId);
       if (info && info.name) {
-        userInfoCache[twitterUserId] = info.name;
+        userInfoCache[twitterUserId] = info.name; // ✅ nom complet
         console.log(`✅ Nom détecté : ${info.name}`);
       } else {
         userInfoCache[twitterUserId] = twitterUserId;
         console.warn(`⚠️ Aucun nom trouvé pour ${twitterUserId}`);
       }
-      console.log(`✅ @${userInfoCache[twitterUserId]} préchargé.`);
     } catch (err) {
       console.error(
         `❌ Erreur lors du chargement de l'utilisateur ${twitterUserId} :`,

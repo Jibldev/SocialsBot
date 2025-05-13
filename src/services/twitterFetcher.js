@@ -34,7 +34,7 @@ async function getLatestTweet(userId) {
 }
 
 /**
- * Récupère les infos d’un utilisateur (nom complet + pseudo)
+ * ℹ️ Récupère le nom et le pseudo Twitter d’un utilisateur
  * @param {string} userId - L'ID numérique du compte Twitter
  * @returns {{ name: string, username: string } | null}
  */
@@ -46,10 +46,7 @@ async function getUserInfo(userId) {
       username: user.data.username,
     };
   } catch (err) {
-    console.error(
-      `[getUserInfo] Erreur lors de la récupération de ${userId} :`,
-      err
-    );
+    console.error(`[getUserInfo] Erreur :`, err);
     return null;
   }
 }
