@@ -83,7 +83,7 @@ client.once("ready", () => {
   setTimeout(() => {
     console.log("⏳ Lancement initial de checkForNewTweets()");
     checkForNewTweets();
-    setInterval(checkForNewTweets, 15 * 60 * 1000); // Toutes les 15 min
+    setInterval(checkForNewTweets, 30 * 60 * 1000); // 30 min
   }, delay);
 });
 
