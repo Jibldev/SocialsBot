@@ -1,6 +1,6 @@
 require("./utils/keepAlive.js");
 require("dotenv").config();
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const { getLatestTweet } = require("./services/twitterFetcher.js");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -14,22 +14,29 @@ for (let i = 1; i <= 10; i++) {
 }
 if (process.env.TWITTER_USER_ID) feeds.unshift(process.env.TWITTER_USER_ID);
 
+console.log(`📝 Feeds configurés : ${feeds.join(", ") || "Aucun"}`);
+
 // 🧠 Cache mémoire pour éviter les doublons
 const lastTweetIds = {};
 
 // 🔁 Vérifie s’il y a un nouveau tweet pour chaque compte
 async function checkForNewTweets() {
   for (const twitterUserId of feeds) {
+    console.log(`[${twitterUserId}] Recherche d'un nouveau tweet...`);
     try {
       const tweet = await getLatestTweet(twitterUserId);
-      if (!tweet) continue;
+      if (!tweet) {
+        console.log(`[${twitterUserId}] Aucun tweet trouvé (timeline vide).`);
+        continue;
+      }
+
+      // console.log(`[${twitterUserId}] Dernier tweet texte : ${tweet.text}`); // ↙️ Décommenter pour debug
 
       if (lastTweetIds[twitterUserId] !== tweet.id) {
         lastTweetIds[twitterUserId] = tweet.id;
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
 
-        const { EmbedBuilder } = require("discord.js");
         const embed = new EmbedBuilder()
           .setColor(0x1da1f2)
           .setTitle("📢 Nouveau tweet disponible !")
@@ -70,10 +77,11 @@ async function checkForNewTweets() {
 client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
-  const delay = Number(process.env.START_DELAY_MS || 0);
+  const delay = Number(process.env.START_DELAY_MS || 60000); // 60s default pour éviter surcharge startup
   console.log(`⏱️ Première vérification dans ${delay / 1000}s...`);
 
   setTimeout(() => {
+    console.log("⏳ Lancement initial de checkForNewTweets()");
     checkForNewTweets();
     setInterval(checkForNewTweets, 15 * 60 * 1000); // Toutes les 15 min
   }, delay);
