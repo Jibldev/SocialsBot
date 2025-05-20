@@ -3,6 +3,15 @@ require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const { getLatestTweet } = require("./services/twitterFetcher.js");
 
+// 🧯 Catch global errors
+process.on("uncaughtException", (err) => {
+  console.error("🔥 Erreur non interceptée :", err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("🔥 Rejet de promesse non géré :", reason);
+});
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const DISCORD_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
 
@@ -14,23 +23,24 @@ for (let i = 1; i <= 10; i++) {
 }
 if (process.env.TWITTER_USER_ID) feeds.unshift(process.env.TWITTER_USER_ID);
 
-console.log(`📝 Feeds configurés : ${feeds.join(", ") || "Aucun"}`);
+console.log("📝 Feeds configurés :", feeds.join(", "));
 
 // 🧠 Cache mémoire pour éviter les doublons
 const lastTweetIds = {};
 
 // 🔁 Vérifie s’il y a un nouveau tweet pour chaque compte
 async function checkForNewTweets() {
+  console.log("🔁 checkForNewTweets lancé à", new Date().toLocaleString());
   for (const twitterUserId of feeds) {
-    console.log(`[${twitterUserId}] Recherche d'un nouveau tweet...`);
     try {
+      console.log(`[${twitterUserId}] Recherche d'un nouveau tweet...`);
       const tweet = await getLatestTweet(twitterUserId);
+      console.log(`[${twitterUserId}] Résultat :`, tweet);
+
       if (!tweet) {
         console.log(`[${twitterUserId}] Aucun tweet trouvé (timeline vide).`);
         continue;
       }
-
-      // console.log(`[${twitterUserId}] Dernier tweet texte : ${tweet.text}`); // ↙️ Décommenter pour debug
 
       if (lastTweetIds[twitterUserId] !== tweet.id) {
         lastTweetIds[twitterUserId] = tweet.id;
@@ -50,7 +60,7 @@ async function checkForNewTweets() {
           });
 
         await channel.send({
-          content: tweet.url, // Nécessaire pour garder l’aperçu automatique Twitter
+          content: tweet.url,
           embeds: [embed],
         });
 
@@ -77,13 +87,13 @@ async function checkForNewTweets() {
 client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
-  const delay = Number(process.env.START_DELAY_MS || 60000); // 60s default pour éviter surcharge startup
+  const delay = Number(process.env.START_DELAY_MS || 60000);
   console.log(`⏱️ Première vérification dans ${delay / 1000}s...`);
 
   setTimeout(() => {
     console.log("⏳ Lancement initial de checkForNewTweets()");
     checkForNewTweets();
-    setInterval(checkForNewTweets, 30 * 60 * 1000); // 30 min
+    setInterval(checkForNewTweets, 30 * 60 * 1000); // Toutes les 30 min
   }, delay);
 });
 
