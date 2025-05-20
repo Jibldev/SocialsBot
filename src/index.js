@@ -28,9 +28,26 @@ async function checkForNewTweets() {
         lastTweetIds[twitterUserId] = tweet.id;
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
-        await channel.send(`📢 Nouveau tweet !\n${tweet.url}`);
 
-        console.log(`[${twitterUserId}] Tweet posté : ${tweet.url}`);
+        const { EmbedBuilder } = require("discord.js");
+        const embed = new EmbedBuilder()
+          .setColor(0x1da1f2)
+          .setTitle("📢 Nouveau tweet disponible !")
+          .setDescription(
+            "👑 **Elon Mush TweeT**\nOpen link to like and repost ↓"
+          )
+          .setTimestamp(new Date(tweet.date))
+          .setFooter({
+            text: "Lewdiii Feed",
+            iconURL: "https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
+          });
+
+        await channel.send({
+          content: tweet.url, // Nécessaire pour garder l’aperçu automatique Twitter
+          embeds: [embed],
+        });
+
+        console.log(`[${twitterUserId}] Tweet posté avec embed : ${tweet.url}`);
       } else {
         console.log(`[${twitterUserId}] Aucun nouveau tweet.`);
       }
