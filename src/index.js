@@ -38,7 +38,7 @@ async function checkForNewTweets() {
           )
           .setTimestamp(new Date(tweet.date))
           .setFooter({
-            text: "Lewdiii Feed",
+            text: "Twitter Feed",
             iconURL: "https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
           });
 
