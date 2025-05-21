@@ -47,7 +47,9 @@ async function checkForNewTweets() {
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
 
-        const messageContent = `📢 **Nouveau tweet disponible !**\n\n👑 **Elon Mush TweeT**\nOpen link to like and repost ↓\n${tweet.url}`;
+        const messageContent = `#📢 Nouveau tweet disponible !
+        👑 ##Elon Mush TweeT
+        Open link to like and repost ↓${tweet.url}`;
 
         await channel.send({
           content: messageContent,
