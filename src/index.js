@@ -53,12 +53,14 @@ async function checkForNewTweets() {
 
         const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
 
-        const rawMessage = `<@&ROLE_ID>
+        const rawMessage = `<@&${roleId}>
 # 📢 New tweet !
 ## 👑 ${characterName}
 Open the link to **like** and **repost**:
 - ${tweet.url}
 - *Share and follow for more*`;
+
+        const messageContent = clean(rawMessage);
 
         await channel.send({
           content: messageContent,
