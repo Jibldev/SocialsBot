@@ -48,17 +48,17 @@ async function checkForNewTweets() {
         setTweet(tweet);
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
-        const roleId = "112233445566778899";
+        const roleId = "1374788118003060786";
         const characterName = tweet.text?.split("-")[0].trim() || "???";
 
         const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
 
         const rawMessage = `<@&${roleId}>
-# 📢 New tweet !
-## 👑 ${characterName}
-Open the link to **like** and **repost**:
+# Undressing Game!
+# 👑 ${characterName}
+Open link to **like** and **repost**:
 - ${tweet.url}
-- *Share and follow for more*`;
+- *Rewards are posted in (insert channel) shortly after rewards have been achieved, please be patient if the reward isn't here yet - thanks!* `;
 
         const messageContent = clean(rawMessage);
 
