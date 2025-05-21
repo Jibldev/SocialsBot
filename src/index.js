@@ -51,14 +51,18 @@ async function checkForNewTweets() {
         const roleId = "1374788118003060786";
         const characterName = tweet.text?.split("-")[0].trim() || "???";
 
+        const emojiCrown = "<a:YellowCrown:1323735636913422347>";
+        const emojiMelody = "<a:melody_heart:1323736627180212235>";
+        const emojiHearts = "<a:hearts~1:1320778528781897748>";
+
         const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
 
         const rawMessage = `<@&${roleId}>
-# Undressing Game! 
-# 👑 ${characterName}
+# Undressing Game! ${emojiHearts}
+# ${emojiCrown} ${characterName}
 Open link to **like** and **repost**:
 - ${tweet.url}
-- *Rewards are posted in (insert channel) shortly after rewards have been achieved, please be patient if the reward isn't here yet - thanks!* `;
+- *Rewards are posted in (insert channel) shortly after rewards have been achieved, please be patient if the reward isn't here yet - thanks!* ${emojiMelody} `;
 
         const messageContent = clean(rawMessage);
 
