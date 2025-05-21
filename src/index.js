@@ -48,7 +48,7 @@ async function checkForNewTweets() {
         setTweet(tweet);
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
-        const roleId = "1107220620795707513";
+        const roleId = "1100801877869875276";
         const characterName = tweet.text?.split("-")[0].trim() || "???";
 
         const emojiCrown = "<a:YellowCrown:1323735636913422347>";
