@@ -46,8 +46,10 @@ async function checkForNewTweets() {
         lastTweetIds[twitterUserId] = tweet.id;
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
+        const roleId = "1374788118003060786";
 
-        const messageContent = `# 📢 New tweet !
+        const messageContent = `<@&${roleId}>
+        # 📢 New tweet !
         ## 👑 Elon Mush TweeT
         - ${tweet.url}
         - Share and follow for more `;
