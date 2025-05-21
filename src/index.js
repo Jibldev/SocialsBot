@@ -48,12 +48,12 @@ async function checkForNewTweets() {
         setTweet(tweet);
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
-        const roleId = "1374788118003060786";
+        const roleId = "1107220620795707513";
         const characterName = tweet.text?.split("-")[0].trim() || "???";
 
         const emojiCrown = "<a:YellowCrown:1323735636913422347>";
         const emojiMelody = "<a:melody_heart:1323736627180212235>";
-        const emojiHearts = "<a:hearts~1:1320778528781897748>";
+        const emojiHearts = "<a:hearts:1320778528781897748>";
 
         const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
 
