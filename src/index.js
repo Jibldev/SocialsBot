@@ -54,7 +54,7 @@ async function checkForNewTweets() {
         const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
 
         const rawMessage = `<@&${roleId}>
-# Undressing Game!
+# Undressing Game! 
 # 👑 ${characterName}
 Open link to **like** and **repost**:
 - ${tweet.url}
