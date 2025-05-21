@@ -1,6 +1,6 @@
 require("./utils/keepAlive.js");
 require("dotenv").config();
-const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
+const { Client, GatewayIntentBits } = require("discord.js");
 const { getLatestTweet } = require("./services/twitterFetcher.js");
 
 // 🧯 Catch global errors
@@ -47,24 +47,15 @@ async function checkForNewTweets() {
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
 
-        const embed = new EmbedBuilder()
-          .setColor(0x1da1f2)
-          .setTitle("📢 Nouveau tweet disponible !")
-          .setDescription(
-            "👑 **Elon Mush TweeT**\nOpen link to like and repost ↓"
-          )
-          .setTimestamp(new Date(tweet.date))
-          .setFooter({
-            text: "Twitter Feed",
-            iconURL: "https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
-          });
+        const messageContent = `📢 **Nouveau tweet disponible !**\n\n👑 **Elon Mush TweeT**\nOpen link to like and repost ↓\n${tweet.url}`;
 
         await channel.send({
-          content: tweet.url,
-          embeds: [embed],
+          content: messageContent,
         });
 
-        console.log(`[${twitterUserId}] Tweet posté avec embed : ${tweet.url}`);
+        console.log(
+          `[${twitterUserId}] Tweet posté avec message : ${tweet.url}`
+        );
       } else {
         console.log(`[${twitterUserId}] Aucun nouveau tweet.`);
       }
