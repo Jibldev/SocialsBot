@@ -2,6 +2,7 @@ require("./utils/keepAlive.js");
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 const { getLatestTweet } = require("./services/twitterFetcher.js");
+const { setTweet, isNewTweet } = require("./utils/tweetCache");
 
 // 🧯 Catch global errors
 process.on("uncaughtException", (err) => {
@@ -42,17 +43,22 @@ async function checkForNewTweets() {
         continue;
       }
 
-      if (lastTweetIds[twitterUserId] !== tweet.id) {
+      if (isNewTweet(tweet)) {
         lastTweetIds[twitterUserId] = tweet.id;
+        setTweet(tweet);
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
-        const roleId = "1374788118003060786";
+        const roleId = "112233445566778899";
+        const characterName = tweet.text?.split("-")[0].trim() || "???";
 
-        const messageContent = `<@&${roleId}>
-        # 📢 New tweet !
-        ## 👑 Elon Mush TweeT
-        - ${tweet.url}
-        - Share and follow for more `;
+        const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
+
+        const rawMessage = `<@&ROLE_ID>
+# 📢 New tweet !
+## 👑 ${characterName}
+Open the link to **like** and **repost**:
+- ${tweet.url}
+- *Share and follow for more*`;
 
         await channel.send({
           content: messageContent,
