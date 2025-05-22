@@ -55,7 +55,7 @@ async function checkForNewTweets() {
         const emojiMelody = "<a:melody_heart:1323736627180212235>";
         const emojiHearts = "<a:hearts:1320778528781897748>";
 
-        const channelLink = "<#1307055225839816776>";
+        const channelLink = "<#1315321592405819422>";
 
         // Remplace 'twitter.com' ou 'x.com' par 'fxtwitter.com' dans l'URL du tweet
         const tweetUrl = tweet.url.replace(
