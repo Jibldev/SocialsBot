@@ -55,6 +55,8 @@ async function checkForNewTweets() {
         const emojiMelody = "<a:melody_heart:1323736627180212235>";
         const emojiHearts = "<a:hearts:1320778528781897748>";
 
+        const channelLink = "<#1307055225839816776>";
+
         // Remplace 'twitter.com' ou 'x.com' par 'fxtwitter.com' dans l'URL du tweet
         const tweetUrl = tweet.url.replace(
           /(twitter\.com|x\.com)/,
@@ -68,7 +70,7 @@ async function checkForNewTweets() {
 # ${emojiCrown} ${characterName}
 Open link to **like** and **repost**:
 - ${tweetUrl}
-- *Rewards are posted in (insert channel) shortly after rewards have been achieved, please be patient if the reward isn't here yet - thanks!* ${emojiMelody} `;
+- *Rewards are posted in ${channelLink} shortly after rewards have been achieved, please be patient if the reward isn't here yet - thanks!* ${emojiMelody} `;
 
         const messageContent = clean(rawMessage);
 
