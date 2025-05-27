@@ -75,7 +75,7 @@ const puppeteer = require("puppeteer");
 async function getLatestTweet(username) {
   try {
     const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome-stable",
+      executablePath: "/usr/bin/chromium-browser",
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
