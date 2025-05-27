@@ -104,18 +104,32 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h)
-  const checkHours = [0, 13, 19]; // 8h, 14h, 20h
+  const checkHours = [0, 13, 20];
 
-  // Démarre un intervalle qui vérifie l'heure chaque minute
+  // Pour éviter les doublons : on garde l'heure du dernier check
+  let lastCheckedHour = null;
+
   setInterval(() => {
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
 
-    // Vérifie si c'est l'heure exacte et si on est à la minute 0 (exemple : 14:00)
-    if (checkHours.includes(currentHour) && currentMinute === 0) {
-      console.log(`⏰ Check des tweets à ${currentHour}h`);
-      checkForNewTweets();
+    console.log(
+      `🕒 Tick... ${currentHour}h${
+        currentMinute < 10 ? "0" + currentMinute : currentMinute
+      }`
+    );
+
+    // Vérifie si c'est une des heures prévues
+    if (checkHours.includes(currentHour)) {
+      // Si on est dans la fenêtre 0-2 minutes et qu'on n'a pas déjà fait le check pour cette heure
+      if (currentMinute <= 4 && lastCheckedHour !== currentHour) {
+        console.log(
+          `⏰ Check des tweets à ${currentHour}h (minute ${currentMinute})`
+        );
+        checkForNewTweets();
+        lastCheckedHour = currentHour;
+      }
     }
   }, 60 * 1000); // Vérifie toutes les 60 secondes
 });
