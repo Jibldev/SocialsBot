@@ -103,11 +103,16 @@ Open link to **like** and **repost**:
 client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
-  // Définis les heures fixes pour les checks (format 24h en Europe/Paris)
-  const checkHours = [5, 12, 23];
+  // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
+  const checkTimes = [
+    { hour: 0, minute: 0 },
+    { hour: 12, minute: 0 },
+    { hour: 23, minute: 0 },
+    { hour: 23, minute: 35 }, // Exemples supplémentaires, tu peux en ajouter ici
+  ];
 
-  // Pour éviter les doublons : on garde l'heure du dernier check
-  let lastCheckedHour = null;
+  // Pour éviter les doublons : on garde l'heure et la minute du dernier check
+  let lastCheckedKey = null;
 
   // Fonction pour obtenir l'heure et la minute en Europe/Paris (GMT+2)
   const getParisTime = () => {
@@ -132,15 +137,18 @@ client.once("ready", () => {
       }`
     );
 
-    // Vérifie si c'est une des heures prévues
-    if (checkHours.includes(currentHour)) {
-      // Si on est dans la fenêtre 0-4 minutes et qu'on n'a pas déjà fait le check pour cette heure
-      if (currentMinute <= 4 && lastCheckedHour !== currentHour) {
+    for (const { hour, minute } of checkTimes) {
+      const key = `${hour}:${minute}`;
+      if (
+        currentHour === hour &&
+        currentMinute === minute &&
+        lastCheckedKey !== key
+      ) {
         console.log(
-          `⏰ Check des tweets à ${currentHour}h (minute ${currentMinute})`
+          `⏰ Check des tweets à ${hour}h${minute < 10 ? "0" + minute : minute}`
         );
         checkForNewTweets();
-        lastCheckedHour = currentHour;
+        lastCheckedKey = key;
       }
     }
   }, 60 * 1000); // Vérifie toutes les 60 secondes
