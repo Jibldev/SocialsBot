@@ -108,7 +108,7 @@ client.once("ready", () => {
     { hour: 0, minute: 0 },
     { hour: 12, minute: 0 },
     { hour: 23, minute: 0 },
-    { hour: 23, minute: 35 }, // Exemples supplémentaires, tu peux en ajouter ici
+    { hour: 23, minute: 45 }, // Exemples supplémentaires, tu peux en ajouter ici
   ];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check

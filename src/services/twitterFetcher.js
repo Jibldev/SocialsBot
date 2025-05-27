@@ -103,7 +103,7 @@ async function getLatestTweet(username) {
       const now = new Date();
       const diffHours = (now - tweetDate) / (1000 * 60 * 60);
 
-      if (diffHours > 8) return;
+      if (diffHours > 13) return;
 
       if (!isRetweet && hasImage && !foundTweet) {
         const tweetText = tweetEl.text().trim();
