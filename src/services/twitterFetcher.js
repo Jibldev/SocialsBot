@@ -97,15 +97,30 @@ async function getLatestTweet(username) {
       const hasImage = tweetEl.find('img[src*="twimg.com/media"]').length > 0;
 
       const tweetDateTime = tweetEl.find("time").attr("datetime");
-      if (!tweetDateTime) return;
+      if (!tweetDateTime) {
+        console.log(`[Scraper Debug] Tweet ignoré : pas de date`);
+        return;
+      }
 
       const tweetDate = new Date(tweetDateTime);
       const now = new Date();
       const diffHours = (now - tweetDate) / (1000 * 60 * 60);
 
-      if (diffHours > 24) return;
+      console.log(
+        `[Scraper Debug] Tweet trouvé : diffHours=${diffHours.toFixed(
+          2
+        )}h, hasImage=${hasImage}, isRetweet=${isRetweet}`
+      );
+
+      if (diffHours > 24) {
+        console.log(
+          `[Scraper Debug] Tweet ignoré : trop vieux (${diffHours.toFixed(2)}h)`
+        );
+        return;
+      }
 
       if (!isRetweet && hasImage && !foundTweet) {
+        console.log(`[Scraper Debug] Tweet valide trouvé !`);
         const tweetText = tweetEl.text().trim();
         const imageUrl = tweetEl
           .find('img[src*="twimg.com/media"]')
