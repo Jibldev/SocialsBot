@@ -65,8 +65,7 @@ module.exports = {
 
 ***/
 
-const axios = require("axios");
-const cheerio = require("cheerio");
+const puppeteer = require("puppeteer");
 
 /**
  * 🔁 Récupère le dernier tweet original d’un utilisateur contenant une image
@@ -75,74 +74,62 @@ const cheerio = require("cheerio");
  */
 async function getLatestTweet(username) {
   try {
-    const url = `https://x.com/${username}`;
-    const { data: html } = await axios.get(url, {
-      timeout: 30000, // 30 secondes (plus long pour éviter les timeouts)
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-        "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Accept-Encoding": "gzip, deflate, br",
-        Connection: "keep-alive",
-      },
+    const browser = await puppeteer.launch({
+      headless: "new", // Nouvelle API headless plus stable
+      args: ["--no-sandbox", "--disable-setuid-sandbox"], // Nécessaire sur Render
     });
+    const page = await browser.newPage();
 
-    const $ = cheerio.load(html);
-    let foundTweet = null;
-
-    const tweetCount = $('div[data-testid="cellInnerDiv"]').length;
-    console.log(
-      `[Scraper Debug] ${tweetCount} div[data-testid="cellInnerDiv"] trouvés.`
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
     );
 
-    $('div[data-testid="cellInnerDiv"]').each((i, el) => {
-      const tweetEl = $(el);
+    await page.goto(`https://x.com/${username}`, {
+      waitUntil: "networkidle2",
+      timeout: 30000,
+    });
 
-      const isRetweet = tweetEl.text().includes("Retweeted");
-      const hasImage = tweetEl.find('img[src*="twimg.com/media"]').length > 0;
+    await page.waitForSelector("article", { timeout: 15000 });
 
-      const tweetDateTime = tweetEl.find("time").attr("datetime");
-      if (!tweetDateTime) {
-        console.log(`[Scraper Debug] Tweet ignoré : pas de date`);
-        return;
-      }
+    const tweets = await page.$$eval("article", (articles) =>
+      articles.map((a) => {
+        const text = a.innerText;
+        const image = a.querySelector('img[src*="twimg.com/media"]')?.src;
+        const link = a.querySelector('a[href*="/status/"]')?.href;
+        const time = a.querySelector("time")?.getAttribute("datetime");
+        return { text, image, link, time };
+      })
+    );
 
-      const tweetDate = new Date(tweetDateTime);
-      const now = new Date();
+    await browser.close();
+
+    const now = new Date();
+    for (const tweet of tweets) {
+      if (!tweet.image || !tweet.time) continue;
+
+      const tweetDate = new Date(tweet.time);
       const diffHours = (now - tweetDate) / (1000 * 60 * 60);
 
       console.log(
         `[Scraper Debug] Tweet trouvé : diffHours=${diffHours.toFixed(
           2
-        )}h, hasImage=${hasImage}, isRetweet=${isRetweet}`
+        )}h, hasImage=${!!tweet.image}`
       );
 
-      if (diffHours > 24) {
+      if (diffHours <= 16) {
+        return {
+          text: tweet.text,
+          image: tweet.image,
+          url: tweet.link,
+        };
+      } else {
         console.log(
           `[Scraper Debug] Tweet ignoré : trop vieux (${diffHours.toFixed(2)}h)`
         );
-        return;
       }
+    }
 
-      if (!isRetweet && hasImage && !foundTweet) {
-        console.log(`[Scraper Debug] Tweet valide trouvé !`);
-        const tweetText = tweetEl.text().trim();
-        const imageUrl = tweetEl
-          .find('img[src*="twimg.com/media"]')
-          .attr("src");
-        const tweetUrl = `https://x.com${tweetEl
-          .find('a[href*="/status/"]')
-          .attr("href")}`;
-
-        foundTweet = {
-          text: tweetText,
-          image: imageUrl,
-          url: tweetUrl,
-        };
-      }
-    });
-
-    return foundTweet;
+    return null; // Aucun tweet valide trouvé
   } catch (err) {
     console.error("[Twitter Scraper] Erreur :", err.message);
     return null;
