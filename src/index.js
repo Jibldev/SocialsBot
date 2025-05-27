@@ -103,14 +103,21 @@ Open link to **like** and **repost**:
 client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
-  const delay = Number(process.env.START_DELAY_MS || 60000);
-  console.log(`⏱️ Première vérification dans ${delay / 1000}s...`);
+  // Définis les heures fixes pour les checks (format 24h)
+  const checkHours = [0, 13, 19]; // 8h, 14h, 20h
 
-  setTimeout(() => {
-    console.log("⏳ Lancement initial de checkForNewTweets()");
-    checkForNewTweets();
-    setInterval(checkForNewTweets, 30 * 60 * 1000); // Toutes les 30 min
-  }, delay);
+  // Démarre un intervalle qui vérifie l'heure chaque minute
+  setInterval(() => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    // Vérifie si c'est l'heure exacte et si on est à la minute 0 (exemple : 14:00)
+    if (checkHours.includes(currentHour) && currentMinute === 0) {
+      console.log(`⏰ Check des tweets à ${currentHour}h`);
+      checkForNewTweets();
+    }
+  }, 60 * 1000); // Vérifie toutes les 60 secondes
 });
 
 client.login(process.env.DISCORD_TOKEN);
