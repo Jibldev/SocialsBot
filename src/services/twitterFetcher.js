@@ -90,6 +90,11 @@ async function getLatestTweet(username) {
     const $ = cheerio.load(html);
     let foundTweet = null;
 
+    const tweetCount = $('div[data-testid="cellInnerDiv"]').length;
+    console.log(
+      `[Scraper Debug] ${tweetCount} div[data-testid="cellInnerDiv"] trouvés.`
+    );
+
     $('div[data-testid="cellInnerDiv"]').each((i, el) => {
       const tweetEl = $(el);
 
