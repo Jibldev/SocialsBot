@@ -103,20 +103,28 @@ Open link to **like** and **repost**:
 client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
-  // Définis les heures fixes pour les checks (format 24h)
+  // Définis les heures fixes pour les checks (format 24h en Europe/Paris)
   const checkHours = [0, 13, 20];
 
   // Pour éviter les doublons : on garde l'heure du dernier check
   let lastCheckedHour = null;
 
-  setInterval(() => {
-    // Récupère l'heure locale en France
-    const nowString = new Date().toLocaleString("fr-FR", {
+  // Fonction pour obtenir l'heure et la minute en Europe/Paris (GMT+2)
+  const getParisTime = () => {
+    const formatter = new Intl.DateTimeFormat("fr-FR", {
       timeZone: "Europe/Paris",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: false,
     });
-    const now = new Date(nowString);
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
+    const parts = formatter.formatToParts(new Date());
+    const hour = Number(parts.find((p) => p.type === "hour").value);
+    const minute = Number(parts.find((p) => p.type === "minute").value);
+    return { hour, minute };
+  };
+
+  setInterval(() => {
+    const { hour: currentHour, minute: currentMinute } = getParisTime();
 
     console.log(
       `🕒 Tick... ${currentHour}h${
@@ -126,7 +134,7 @@ client.once("ready", () => {
 
     // Vérifie si c'est une des heures prévues
     if (checkHours.includes(currentHour)) {
-      // Si on est dans la fenêtre 0-2 minutes et qu'on n'a pas déjà fait le check pour cette heure
+      // Si on est dans la fenêtre 0-4 minutes et qu'on n'a pas déjà fait le check pour cette heure
       if (currentMinute <= 4 && lastCheckedHour !== currentHour) {
         console.log(
           `⏰ Check des tweets à ${currentHour}h (minute ${currentMinute})`
