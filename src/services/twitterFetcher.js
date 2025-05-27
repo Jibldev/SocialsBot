@@ -77,8 +77,13 @@ async function getLatestTweet(username) {
   try {
     const url = `https://x.com/${username}`;
     const { data: html } = await axios.get(url, {
+      timeout: 30000, // 30 secondes (plus long pour éviter les timeouts)
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        Connection: "keep-alive",
       },
     });
 
@@ -92,13 +97,13 @@ async function getLatestTweet(username) {
       const hasImage = tweetEl.find('img[src*="twimg.com/media"]').length > 0;
 
       const tweetDateTime = tweetEl.find("time").attr("datetime");
-      if (!tweetDateTime) return; // Si pas de date, on ignore
+      if (!tweetDateTime) return;
 
       const tweetDate = new Date(tweetDateTime);
       const now = new Date();
       const diffHours = (now - tweetDate) / (1000 * 60 * 60);
 
-      if (diffHours > 8) return; // Ignore si plus vieux que 8h
+      if (diffHours > 8) return;
 
       if (!isRetweet && hasImage && !foundTweet) {
         const tweetText = tweetEl.text().trim();
