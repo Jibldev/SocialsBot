@@ -75,9 +75,11 @@ const puppeteer = require("puppeteer");
 async function getLatestTweet(username) {
   try {
     const browser = await puppeteer.launch({
-      headless: "new", // Nouvelle API headless plus stable
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], // Nécessaire sur Render
+      executablePath: "/usr/bin/google-chrome-stable",
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
+
     const page = await browser.newPage();
 
     await page.setUserAgent(
