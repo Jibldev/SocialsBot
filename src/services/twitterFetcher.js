@@ -20,7 +20,7 @@ async function getLatestTweet(userId) {
         "text",
         "referenced_tweets",
       ],
-      max_results: 1,
+      max_results: 5,
     });
 
     const tweets = timeline.data?.data;
