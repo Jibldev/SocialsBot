@@ -110,7 +110,11 @@ client.once("ready", () => {
   let lastCheckedHour = null;
 
   setInterval(() => {
-    const now = new Date();
+    // Récupère l'heure locale en France
+    const nowString = new Date().toLocaleString("fr-FR", {
+      timeZone: "Europe/Paris",
+    });
+    const now = new Date(nowString);
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
 
