@@ -19,10 +19,10 @@ const DISCORD_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
 // 📌 Préparation de la liste dynamique des comptes Twitter à suivre
 const feeds = [];
 for (let i = 1; i <= 10; i++) {
-  const id = process.env[`TWITTER_USER_ID_${i}`];
-  if (id) feeds.push(id);
+  const username = process.env[`TWITTER_USERNAME_${i}`];
+  if (username) feeds.push(username);
 }
-if (process.env.TWITTER_USER_ID) feeds.unshift(process.env.TWITTER_USER_ID);
+if (process.env.TWITTER_USERNAME) feeds.unshift(process.env.TWITTER_USERNAME);
 
 console.log("📝 Feeds configurés :", feeds.join(", "));
 
@@ -48,7 +48,7 @@ async function checkForNewTweets() {
         setTweet(tweet);
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
-        const roleId = "1107220620795707513";
+        const roleId = "1345088388285599835";
         const characterName = tweet.text?.split("-")[0].trim() || "???";
 
         const emojiCrown = "<a:YellowCrown:1323735636913422347>";
@@ -104,7 +104,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h en Europe/Paris)
-  const checkHours = [0, 13, 22];
+  const checkHours = [5, 12, 23];
 
   // Pour éviter les doublons : on garde l'heure du dernier check
   let lastCheckedHour = null;

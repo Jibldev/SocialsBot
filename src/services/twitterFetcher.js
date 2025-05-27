@@ -1,3 +1,5 @@
+/*** 
+
 require("dotenv").config();
 const { TwitterApi } = require("twitter-api-v2");
 
@@ -7,7 +9,7 @@ const twitterClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
  * 🔁 Récupère le dernier tweet original d’un utilisateur contenant une image
  * ❌ Ignore les réponses (même à soi-même)
  * ❌ Ignore les tweets sans image
- */
+
 async function getLatestTweet(userId) {
   try {
     const timeline = await twitterClient.v2.userTimeline(userId, {
@@ -53,6 +55,71 @@ async function getLatestTweet(userId) {
     return null; // Aucun tweet original avec image trouvé
   } catch (err) {
     console.error("[Twitter Fetcher] Erreur :", err);
+    return null;
+  }
+}
+
+module.exports = {
+  getLatestTweet,
+};
+
+***/
+
+const axios = require("axios");
+const cheerio = require("cheerio");
+
+/**
+ * 🔁 Récupère le dernier tweet original d’un utilisateur contenant une image
+ * ❌ Ignore les réponses, les retweets
+ * ❌ Ignore les tweets plus vieux que 8h
+ */
+async function getLatestTweet(username) {
+  try {
+    const url = `https://x.com/${username}`;
+    const { data: html } = await axios.get(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+      },
+    });
+
+    const $ = cheerio.load(html);
+    let foundTweet = null;
+
+    $('div[data-testid="cellInnerDiv"]').each((i, el) => {
+      const tweetEl = $(el);
+
+      const isRetweet = tweetEl.text().includes("Retweeted");
+      const hasImage = tweetEl.find('img[src*="twimg.com/media"]').length > 0;
+
+      const tweetDateTime = tweetEl.find("time").attr("datetime");
+      if (!tweetDateTime) return; // Si pas de date, on ignore
+
+      const tweetDate = new Date(tweetDateTime);
+      const now = new Date();
+      const diffHours = (now - tweetDate) / (1000 * 60 * 60);
+
+      if (diffHours > 8) return; // Ignore si plus vieux que 8h
+
+      if (!isRetweet && hasImage && !foundTweet) {
+        const tweetText = tweetEl.text().trim();
+        const imageUrl = tweetEl
+          .find('img[src*="twimg.com/media"]')
+          .attr("src");
+        const tweetUrl = `https://x.com${tweetEl
+          .find('a[href*="/status/"]')
+          .attr("href")}`;
+
+        foundTweet = {
+          text: tweetText,
+          image: imageUrl,
+          url: tweetUrl,
+        };
+      }
+    });
+
+    return foundTweet;
+  } catch (err) {
+    console.error("[Twitter Scraper] Erreur :", err.message);
     return null;
   }
 }
