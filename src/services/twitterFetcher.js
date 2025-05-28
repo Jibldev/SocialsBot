@@ -94,13 +94,15 @@ async function getLatestTweet(username) {
     await page.waitForSelector("article", { timeout: 15000 });
 
     const tweets = await page.$$eval("article", (articles) =>
-      articles.map((a) => {
-        const text = a.innerText;
-        const image = a.querySelector('img[src*="twimg.com/media"]')?.src;
-        const link = a.querySelector('a[href*="/status/"]')?.href;
-        const time = a.querySelector("time")?.getAttribute("datetime");
-        return { text, image, link, time };
-      })
+      articles
+        .filter((a) => !a.innerText.toLowerCase().includes("épinglé")) // Exclut les tweets épinglés
+        .map((a) => {
+          const text = a.innerText;
+          const image = a.querySelector('img[src*="twimg.com/media"]')?.src;
+          const link = a.querySelector('a[href*="/status/"]')?.href;
+          const time = a.querySelector("time")?.getAttribute("datetime");
+          return { text, image, link, time };
+        })
     );
 
     await browser.close();
