@@ -4,6 +4,7 @@ FROM node:20-slim
 # Installe Chromium pour Puppeteer
 RUN apt-get update && \
   apt-get install -y chromium && \
+  ln -s /usr/bin/chromium /usr/bin/chromium-browser && \
   rm -rf /var/lib/apt/lists/*
 
 # Crée le dossier de l'application
