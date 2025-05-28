@@ -7,7 +7,7 @@ const { setTweet, isNewTweet } = require("./utils/tweetCache");
 
 // 🧯 Catch global errors
 process.on("uncaughtException", (err) => {
-  console.error("🔥 Erreur non interceptée :", err);
+  console.error("🔥 Erreur non interceptée  :", err);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
