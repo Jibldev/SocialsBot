@@ -20,10 +20,10 @@ const DISCORD_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
 // 📌 Préparation de la liste dynamique des comptes Twitter à suivre
 const feeds = [];
 for (let i = 1; i <= 10; i++) {
-  const username = process.env[`TWITTER_USERNAME_${i}`];
+  const username = process.env[`TWITTER_USER_ID_${i}`];
   if (username) feeds.push(username);
 }
-if (process.env.TWITTER_USERNAME) feeds.unshift(process.env.TWITTER_USERNAME);
+if (process.env.TWITTER_USER_ID) feeds.unshift(process.env.TWITTER_USER_ID);
 
 console.log("📝 Feeds configurés :", feeds.join(", "));
 
@@ -105,7 +105,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [{ hour: 6, minute: 30 }];
+  const checkTimes = [{ hour: 7, minute: 0 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;
