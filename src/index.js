@@ -1,4 +1,5 @@
 require("./utils/keepAlive.js");
+console.log("✅ Bot en train de démarrer...");
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 const { getLatestTweet } = require("./services/twitterFetcher.js");
