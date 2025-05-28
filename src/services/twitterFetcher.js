@@ -66,7 +66,7 @@ module.exports = {
 ***/
 
 const puppeteer = require("puppeteer");
-const tweetCache = require("./tweetCache");
+const tweetCache = require("../utils/tweetCache");
 
 /**
  * 🔁 Récupère le dernier tweet original d'un utilisateur contenant une image
