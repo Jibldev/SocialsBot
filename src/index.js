@@ -11,7 +11,7 @@ process.on("uncaughtException", (err) => {
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-  console.error("🔥 Rejet de promesse non géré :", reason);
+  console.error("🔥 Rejet de promesse non géré  :", reason);
 });
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
