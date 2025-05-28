@@ -95,7 +95,7 @@ async function getLatestTweet(username) {
 
     const tweets = await page.$$eval("article", (articles) =>
       articles
-        .filter((a) => !a.innerText.toLowerCase().includes("épinglé")) // Exclut les tweets épinglés
+        .filter((a) => !a.querySelector('div[data-testid="socialContext"]'))
         .map((a) => {
           const text = a.innerText;
           const image = a.querySelector('img[src*="twimg.com/media"]')?.src;
