@@ -105,12 +105,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [
-    { hour: 6, minute: 5 },
-    { hour: 12, minute: 0 },
-    { hour: 23, minute: 0 },
-    { hour: 23, minute: 55 }, // Exemples supplémentaires, tu peux en ajouter ici
-  ];
+  const checkTimes = [{ hour: 6, minute: 30 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;
