@@ -49,7 +49,7 @@ async function checkForNewTweets() {
         setTweet(tweet);
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
-        const roleId = "1345088388285599835";
+        const roleId = "1107220620795707513";
         const characterName = tweet.text?.split("-")[0].trim() || "???";
 
         const emojiCrown = "<a:YellowCrown:1323735636913422347>";
@@ -105,7 +105,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [{ hour: 7, minute: 0 }];
+  const checkTimes = [{ hour: 13, minute: 0 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;
@@ -126,12 +126,6 @@ client.once("ready", () => {
 
   setInterval(() => {
     const { hour: currentHour, minute: currentMinute } = getParisTime();
-
-    console.log(
-      `🕒 Tick... ${currentHour}h${
-        currentMinute < 10 ? "0" + currentMinute : currentMinute
-      }`
-    );
 
     for (const { hour, minute } of checkTimes) {
       const key = `${hour}:${minute}`;
