@@ -118,7 +118,7 @@ async function getLatestTweet(username) {
         )}h, hasImage=${!!tweet.image}`
       );
 
-      if (diffHours <= 16) {
+      if (diffHours <= 18) {
         return {
           text: tweet.text,
           image: tweet.image,
