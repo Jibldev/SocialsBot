@@ -108,7 +108,6 @@ async function getLatestTweet(username) {
     });
 
     await page.waitForSelector("article", { timeout: 15000 });
-    await page.waitForTimeout(3000);
 
     // Scroll pour charger plus de contenu
     await page.evaluate(() => {
