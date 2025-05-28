@@ -106,7 +106,7 @@ client.once("ready", () => {
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
   const checkTimes = [
-    { hour: 5, minute: 55 },
+    { hour: 6, minute: 5 },
     { hour: 12, minute: 0 },
     { hour: 23, minute: 0 },
     { hour: 23, minute: 55 }, // Exemples supplémentaires, tu peux en ajouter ici

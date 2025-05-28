@@ -119,29 +119,48 @@ async function getLatestTweet(username) {
     // Attend le premier article (tweet)
     await page.waitForSelector("article", { timeout: 15000 });
 
-    // Récupère les infos du dernier tweet avec image
-    const tweet = await page.$eval("article", (article) => {
-      const linkElement = article.querySelector('a[href*="/status/"]');
-      let tweetId = null,
-        link = null;
-      if (linkElement && linkElement.href) {
-        link = linkElement.href;
-        const match = link.match(/\/status\/(\d+)/);
-        if (match) tweetId = match[1];
-      }
+    // Récupère TOUS les tweets de l’onglet "Médias"
+    const tweets = await page.$$eval("article", (articles) => {
+      return articles.map((article) => {
+        const text = article.innerText || "";
+        const isPinned =
+          text.includes("Pinned") ||
+          text.includes("Épinglé") ||
+          article.querySelector('[data-testid="pin"]') ||
+          article.querySelector('svg[data-testid="pin"]') ||
+          text.includes("📌");
 
-      let image = null;
-      // Prend la première image réelle du tweet
-      const img = article.querySelector('img[src*="media"]');
-      if (img && img.src) image = img.src;
+        const linkElement = article.querySelector('a[href*="/status/"]');
+        let tweetId = null,
+          link = null;
+        if (linkElement && linkElement.href) {
+          link = linkElement.href;
+          const match = link.match(/\/status\/(\d+)/);
+          if (match) tweetId = match[1];
+        }
 
-      const timeElement = article.querySelector("time");
-      const time = timeElement ? timeElement.getAttribute("datetime") : null;
+        let image = null;
+        const img = article.querySelector('img[src*="media"]');
+        if (img && img.src) image = img.src;
 
-      const text = article.innerText ? article.innerText.substring(0, 300) : "";
+        const timeElement = article.querySelector("time");
+        const time = timeElement ? timeElement.getAttribute("datetime") : null;
 
-      return { tweetId, link, image, time, text };
+        return {
+          tweetId,
+          link,
+          image,
+          time,
+          text: text.substring(0, 300),
+          isPinned: !!isPinned,
+        };
+      });
     });
+
+    // Trouve le premier tweet NON épinglé avec image et id
+    const tweet = tweets.find(
+      (t) => !t.isPinned && t.tweetId && t.image && t.time
+    );
 
     // Récupère le dernier tweet traité depuis le cache
     const lastProcessedTweet = tweetCache.getTweet();
