@@ -66,7 +66,7 @@ module.exports = {
 ***/
 
 const puppeteer = require("puppeteer");
-const tweetCache = require("../utils/tweetCache");
+const tweetCache = require("../utils/");
 
 /**
  * 🔁 Récupère le dernier tweet original d'un utilisateur contenant une image
@@ -108,12 +108,13 @@ async function getLatestTweet(username) {
     });
 
     await page.waitForSelector("article", { timeout: 15000 });
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // Scroll pour charger plus de contenu
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight / 3);
     });
-    await page.waitForTimeout(2000);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     console.log(`[Scraper Debug] Analyse des tweets...`);
 
