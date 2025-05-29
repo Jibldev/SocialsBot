@@ -164,7 +164,7 @@ Check out the post and support:
   }
 }
 
-// ✅ Démarrage du bot
+//********* ✅ Démarrage du bot *********//
 client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
