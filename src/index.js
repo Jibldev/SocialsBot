@@ -56,7 +56,7 @@ async function checkForNewTweets() {
         setTweet(tweet);
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
-        const roleId = "1107220620795707513";
+        const roleId = "1378015911365050431";
         const characterName = tweet.text?.split("-")[0].trim() || "???";
 
         const emojiCrown = "<a:YellowCrown:1323735636913422347>";
@@ -78,7 +78,8 @@ async function checkForNewTweets() {
 # ${emojiCrown} ${characterName}
 Open link to **like** and **repost**:
 - ${tweetUrl}
-- *Rewards are posted in ${channelLink} shortly after rewards have been achieved, please be patient if the reward isn't here yet - thanks!* ${emojiMelody} `;
+- *Rewards are posted in ${channelLink} shortly after rewards have been achieved, please be patient if the reward isn't here yet - thanks!* ${emojiMelody} 
+- To be notified of undressing games, please select your role in <id:customize> `;
 
         const messageContent = clean(rawMessage);
 
