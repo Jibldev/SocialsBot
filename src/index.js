@@ -129,7 +129,7 @@ async function checkForNewPatreonPosts() {
       setPost(post);
 
       const channel = await client.channels.fetch(DISCORD_CHANNEL_IDPATREON);
-      const roleId = "1100801877869875276";
+      const roleId = "110080187786987576";
 
       const emojiCrown = "<a:YellowCrown:1323735636913422347>";
       const emojiHearts = "<a:hearts:1320778528781897748>";
@@ -173,7 +173,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [{ hour: 15, minute: 10 }];
+  const checkTimes = [{ hour: 15, minute: 21 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;
