@@ -24,8 +24,16 @@ async function getLatestPatreonPost() {
       return null;
     }
 
-    // Filtrer les posts (ignorer les drafts ou autres surprises)
-    posts = posts.filter((post) => post.attributes.status === "published");
+    console.log("[Patreon] Liste des posts (debug) :");
+    posts.forEach((post, index) => {
+      console.log(
+        `${index + 1}. ${
+          post.attributes.title || "(No Title)"
+        } | published_at: ${post.attributes.published_at} | status: ${
+          post.attributes.status
+        } | is_pinned: ${post.attributes.is_pinned}`
+      );
+    });
 
     if (posts.length === 0) {
       console.log("[Patreon] Aucun post publié trouvé.");
