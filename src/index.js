@@ -38,6 +38,7 @@ console.log("📝 Feeds configurés :", feeds.join(", "));
 const lastTweetIds = {};
 
 // 🔁 Vérifie s’il y a un nouveau tweet pour chaque compte
+/*
 async function checkForNewTweets() {
   console.log("🔁 checkForNewTweets lancé à", new Date().toLocaleString());
   for (const twitterUserId of feeds) {
@@ -172,7 +173,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [{ hour: 13, minute: 0 }];
+  const checkTimes = [{ hour: 13, minute: 15 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;

@@ -1,3 +1,5 @@
+/* 
+
 require("dotenv").config();
 const { TwitterApi } = require("twitter-api-v2");
 
@@ -8,7 +10,7 @@ const twitterClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
  * ❌ Ignore les réponses (même à soi-même)
  * ❌ Ignore les tweets sans image
  * */
-
+/*
 async function getLatestTweet(userId) {
   try {
     const timeline = await twitterClient.v2.userTimeline(userId, {
@@ -61,3 +63,5 @@ async function getLatestTweet(userId) {
 module.exports = {
   getLatestTweet,
 };
+
+*/

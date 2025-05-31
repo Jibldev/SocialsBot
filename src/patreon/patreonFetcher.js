@@ -6,25 +6,42 @@ const PATREON_CAMPAIGN_ID = process.env.PATREON_CAMPAIGN_ID;
 
 async function getLatestPatreonPost() {
   try {
-    const res = await axios.get(
-      `https://www.patreon.com/api/oauth2/v2/campaigns/${PATREON_CAMPAIGN_ID}/posts?sort=-published_at`,
+    // Étape 1 : Récupérer l'ID de la dernière publication
+    const postsRes = await axios.get(
+      `https://www.patreon.com/api/oauth2/v2/campaigns/${PATREON_CAMPAIGN_ID}/posts?sort=-published_at&page[count]=1`,
       {
-        headers: { Authorization: `Bearer ${PATREON_ACCESS_TOKEN}` },
+        headers: {
+          Authorization: `Bearer ${PATREON_ACCESS_TOKEN}`,
+          "User-Agent": "SocialsBot/1.0",
+        },
       }
     );
 
-    const post = res.data.data[0]; // Le plus récent
-    if (!post) return null;
+    const latestPost = postsRes.data.data[0];
+    if (!latestPost) return null;
 
-    const title = post.attributes.title;
-    const url = post.attributes.url;
-    const content = post.attributes.content || "";
+    const postId = latestPost.id;
 
-    // ✅ Récupère l'image directement (Patreon donne image_url ou thumbnail_url selon le post)
-    const image =
-      post.attributes.image_url || post.attributes.thumbnail_url || null;
+    // Étape 2 : Récupérer les détails de la publication
+    const postRes = await axios.get(
+      `https://www.patreon.com/api/oauth2/v2/posts/${postId}?fields[post]=title,content,url,image_url,thumbnail_url`,
+      {
+        headers: {
+          Authorization: `Bearer ${PATREON_ACCESS_TOKEN}`,
+          "User-Agent": "SocialsBot/1.0",
+        },
+      }
+    );
 
-    return { id: post.id, title, url, content, image };
+    const postData = postRes.data.data;
+    const attributes = postData.attributes;
+
+    const title = attributes.title || "(No Title)";
+    const url = attributes.url || null;
+    const content = attributes.content || "";
+    const image = attributes.image_url || attributes.thumbnail_url || null;
+
+    return { id: postId, title, url, content, image };
   } catch (err) {
     console.error("[Patreon Fetcher] Erreur :", err.response?.data || err);
     return null;
