@@ -150,6 +150,8 @@ Check out the post and support:
         content: messageContent,
         embeds: [
           {
+            title: post.title,
+            description: `[Voir le post sur Patreon](${post.url})\n\n${post.content}`,
             image: { url: post.image },
             color: 0xff66cc,
           },
@@ -170,7 +172,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [{ hour: 12, minute: 40 }];
+  const checkTimes = [{ hour: 13, minute: 0 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;
