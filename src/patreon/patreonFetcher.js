@@ -7,8 +7,9 @@ const PATREON_CAMPAIGN_ID = process.env.PATREON_CAMPAIGN_ID;
 
 async function getLatestPatreonPost() {
   try {
+    // Récupérer les 10 derniers posts (pour plus de sécurité)
     const res = await axios.get(
-      `https://www.patreon.com/api/oauth2/v2/campaigns/${PATREON_CAMPAIGN_ID}/posts?page[count]=10`, // On récupère 10 posts pour plus de sûreté
+      `https://www.patreon.com/api/oauth2/v2/campaigns/${PATREON_CAMPAIGN_ID}/posts?sort=-published_at&page[count]=10`,
       {
         headers: {
           Authorization: `Bearer ${PATREON_ACCESS_TOKEN}`,
@@ -18,12 +19,20 @@ async function getLatestPatreonPost() {
     );
 
     let posts = res.data.data;
-    if (!posts || posts.length === 0) return null;
+    if (!posts || posts.length === 0) {
+      console.log("[Patreon] Aucun post récupéré.");
+      return null;
+    }
 
-    // Filtrer les posts non épinglés
-    posts = posts.filter((post) => post.attributes.is_pinned === false);
+    // Filtrer les posts (ignorer les drafts ou autres surprises)
+    posts = posts.filter((post) => post.attributes.status === "published");
 
-    // Trier par published_at décroissant
+    if (posts.length === 0) {
+      console.log("[Patreon] Aucun post publié trouvé.");
+      return null;
+    }
+
+    // Trier localement par date de publication (décroissant, sécurité)
     posts.sort(
       (a, b) =>
         new Date(b.attributes.published_at) -
@@ -32,7 +41,7 @@ async function getLatestPatreonPost() {
 
     const latestPost = posts[0];
     if (!latestPost) {
-      console.log("[Patreon] Aucun post non épinglé trouvé.");
+      console.log("[Patreon] Aucun post final trouvé.");
       return null;
     }
 
@@ -40,15 +49,18 @@ async function getLatestPatreonPost() {
     const title = latestPost.attributes.title || "(No Title)";
     const url = `https://www.patreon.com/posts/${postId}`;
 
+    // Essayer d'obtenir l'image principale
     let image = latestPost.attributes.image?.large_url || null;
 
+    // Si pas d'image principale, fallback : parser le contenu HTML pour trouver une <img>
     if (!image && latestPost.attributes.content) {
       const $ = cheerio.load(latestPost.attributes.content);
       image = $("img").first().attr("src") || null;
     }
 
-    console.log("[Patreon] Titre:", title);
-    console.log("[Patreon] Image trouvée:", image || "Pas d'image");
+    console.log("[Patreon] Dernier post trouvé :", title);
+    console.log("[Patreon] URL :", url);
+    console.log("[Patreon] Image :", image || "Pas d'image");
 
     return { id: postId, title, url, image };
   } catch (err) {
