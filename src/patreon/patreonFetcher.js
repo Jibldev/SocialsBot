@@ -8,7 +8,7 @@ const PATREON_CAMPAIGN_ID = process.env.PATREON_CAMPAIGN_ID;
 async function getLatestPatreonPost() {
   try {
     const res = await axios.get(
-      `https://www.patreon.com/api/oauth2/v2/campaigns/${PATREON_CAMPAIGN_ID}/posts?sort=-published_at&page[count]=1&fields[post]=title,content,url`,
+      `https://www.patreon.com/api/oauth2/v2/campaigns/${PATREON_CAMPAIGN_ID}/posts?sort=-published_at&page[count]=1&fields[post]=title,content,url,image`,
       {
         headers: {
           Authorization: `Bearer ${PATREON_ACCESS_TOKEN}`,
