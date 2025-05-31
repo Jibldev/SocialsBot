@@ -7,8 +7,9 @@ const PATREON_CAMPAIGN_ID = process.env.PATREON_CAMPAIGN_ID;
 
 async function getLatestPatreonPost() {
   try {
+    // Récupérer les 10 derniers posts (pour plus de sécurité)
     const res = await axios.get(
-      `https://www.patreon.com/api/oauth2/v2/campaigns/${PATREON_CAMPAIGN_ID}/posts?sort=-published_at&page[count]=10&fields[post]=title,content,image,created_at,published_at,is_pinned`,
+      `https://www.patreon.com/api/oauth2/v2/campaigns/${PATREON_CAMPAIGN_ID}/posts?sort=-published_at&page[count]=10`,
       {
         headers: {
           Authorization: `Bearer ${PATREON_ACCESS_TOKEN}`,
@@ -28,13 +29,18 @@ async function getLatestPatreonPost() {
       console.log(
         `${index + 1}. ${
           post.attributes.title || "(No Title)"
-        } | published_at: ${post.attributes.published_at} | is_pinned: ${
-          post.attributes.is_pinned
-        }`
+        } | published_at: ${post.attributes.published_at} | status: ${
+          post.attributes.status
+        } | is_pinned: ${post.attributes.is_pinned}`
       );
     });
 
-    // Trier par published_at décroissant
+    if (posts.length === 0) {
+      console.log("[Patreon] Aucun post publié trouvé.");
+      return null;
+    }
+
+    // Trier localement par date de publication (décroissant, sécurité)
     posts.sort(
       (a, b) =>
         new Date(b.attributes.published_at) -
@@ -51,8 +57,10 @@ async function getLatestPatreonPost() {
     const title = latestPost.attributes.title || "(No Title)";
     const url = `https://www.patreon.com/posts/${postId}`;
 
+    // Essayer d'obtenir l'image principale
     let image = latestPost.attributes.image?.large_url || null;
 
+    // Si pas d'image principale, fallback : parser le contenu HTML pour trouver une <img>
     if (!image && latestPost.attributes.content) {
       const $ = cheerio.load(latestPost.attributes.content);
       image = $("img").first().attr("src") || null;
