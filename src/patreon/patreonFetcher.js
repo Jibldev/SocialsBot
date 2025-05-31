@@ -61,6 +61,10 @@ async function getLatestPatreonPost() {
 
     // Si pas d'image principale, fallback : parser le contenu HTML pour trouver une <img>
     if (!image && latestPost.attributes.content) {
+      console.log(
+        "[Patreon] Contenu HTML brut du post :",
+        latestPost.attributes.content
+      );
       const $ = cheerio.load(latestPost.attributes.content);
       image = $("img").first().attr("src") || null;
     }
