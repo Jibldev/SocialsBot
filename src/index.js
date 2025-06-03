@@ -110,6 +110,7 @@ Open link to **like** and **repost**:
 }
 
 //************     PATREON      **************/
+/*
 
 async function checkForNewPatreonPosts() {
   console.log(
@@ -167,13 +168,14 @@ Check out the post and support:
     console.error("[Patreon] Erreur :", err);
   }
 }
+  
 
-//********* ✅ Démarrage du bot *********//
+//********* ✅ Démarrage du bot *********/
 client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [{ hour: 13, minute: 10 }];
+  const checkTimes = [{ hour: 12, minute: 30 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;
@@ -206,7 +208,7 @@ client.once("ready", () => {
           `⏰ Check des tweets à ${hour}h${minute < 10 ? "0" + minute : minute}`
         );
         checkForNewTweets();
-        checkForNewPatreonPosts();
+        /*checkForNewPatreonPosts(); */
         lastCheckedKey = key;
       }
     }
