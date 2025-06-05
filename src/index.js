@@ -175,7 +175,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [{ hour: 12, minute: 40 }];
+  const checkTimes = [{ hour: 12, minute: 30 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;
@@ -196,6 +196,7 @@ client.once("ready", () => {
 
   setInterval(() => {
     const { hour: currentHour, minute: currentMinute } = getParisTime();
+    let matched = false;
 
     for (const { hour, minute } of checkTimes) {
       const key = `${hour}:${minute}`;
@@ -210,9 +211,14 @@ client.once("ready", () => {
         checkForNewTweets();
         /*checkForNewPatreonPosts(); */
         lastCheckedKey = key;
+        matched = true;
       }
     }
-  }, 60 * 1000); // Vérifie toutes les 60 secondes
+    // Réinitialise le flag quand on n'est plus à la minute cible
+    if (!matched) {
+      lastCheckedKey = null;
+    }
+  }, 60 * 1000);
 });
 
 client.login(process.env.DISCORD_TOKEN);
