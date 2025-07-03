@@ -69,7 +69,7 @@ async function checkForNewTweets() {
         // Remplace 'twitter.com' ou 'x.com' par 'fxtwitter.com' dans l'URL du tweet
         const tweetUrl = tweet.url.replace(
           /(twitter\.com|x\.com)/,
-          "fxtwitter.com"
+          "twitter.com"
         );
 
         const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
