@@ -67,10 +67,10 @@ async function checkForNewTweets() {
         const channelLink = "<#1315321592405819422>";
 
         // Remplace 'twitter.com' ou 'x.com' par 'fxtwitter.com' dans l'URL du tweet
-        const tweetUrl = tweet.url.replace(
+        /* const tweetUrl = tweet.url.replace(
           /(twitter\.com|x\.com)/,
           "twitter.com"
-        );
+        ); */
 
         const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
 
