@@ -69,7 +69,7 @@ async function checkForNewTweets() {
         // Remplace 'twitter.com' ou 'x.com' par 'fxtwitter.com' dans l'URL du tweet
         const tweetUrl = tweet.url.replace(
           /(twitter\.com|x\.com)/,
-          "fixvd.com"
+          "fixvx.com"
         );
 
         const clean = (str) => str.normalize("NFKC").replace(/^[ \\t]+/gm, "");
@@ -175,7 +175,7 @@ client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
 
   // Définis les heures fixes pour les checks (format 24h et minutes, Europe/Paris)
-  const checkTimes = [{ hour: 12, minute: 30 }];
+  const checkTimes = [{ hour: 12, minute: 40 }];
 
   // Pour éviter les doublons : on garde l'heure et la minute du dernier check
   let lastCheckedKey = null;
