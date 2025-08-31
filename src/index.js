@@ -3,10 +3,13 @@ console.log("✅ Bot en train de démarrer...");
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 const { getLatestTweet } = require("./services/twitterFetcher.js");
-const { setTweet, isNewTweet } = require("./utils/tweetCache");
+const { setTweet, isNewTweet, getLastId } = require("./utils/tweetCache");
 
-const { getLatestPatreonPost } = require("./patreon/patreonFetcher.js");
-const { setPost, isNewPost } = require("./patreon/patreonCache.js");
+// Test de lecture Redis au démarrage
+(async () => {
+  const lastId = await getLastId();
+  console.log("Dernier tweet ID stocké dans Redis :", lastId);
+})();
 
 // 🧯 Catch global errors
 process.on("uncaughtException", (err) => {
@@ -20,8 +23,6 @@ process.on("unhandledRejection", (reason, promise) => {
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const DISCORD_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
 
-const DISCORD_CHANNEL_IDPATREON = process.env.DISCORD_CHANNEL_IDPATREON;
-
 //************     TWITTER      **************/
 
 // 📌 Préparation de la liste dynamique des comptes Twitter à suivre
@@ -33,9 +34,6 @@ for (let i = 1; i <= 10; i++) {
 if (process.env.TWITTER_USER_ID) feeds.unshift(process.env.TWITTER_USER_ID);
 
 console.log("📝 Feeds configurés :", feeds.join(", "));
-
-// 🧠 Cache mémoire pour éviter les doublons
-const lastTweetIds = {};
 
 // 🔁 Vérifie s’il y a un nouveau tweet pour chaque compte
 
@@ -52,9 +50,8 @@ async function checkForNewTweets() {
         continue;
       }
 
-      if (isNewTweet(tweet)) {
-        lastTweetIds[twitterUserId] = tweet.id;
-        setTweet(tweet);
+      if (await isNewTweet(tweet)) {
+        await setTweet(tweet);
 
         const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
         const roleId = "1307059893538394214";
@@ -109,67 +106,6 @@ Open link to **like** and **repost**:
   }
 }
 
-//************     PATREON      **************/
-/*
-
-async function checkForNewPatreonPosts() {
-  console.log(
-    "🔁 checkForNewPatreonPosts lancé à",
-    new Date().toLocaleString()
-  );
-  try {
-    const post = await getLatestPatreonPost();
-    console.log(`[Patreon] Résultat :`, post);
-
-    if (!post) {
-      console.log(`[Patreon] Aucun post trouvé.`);
-      return;
-    }
-
-    if (isNewPost(post)) {
-      setPost(post);
-
-      const channel = await client.channels.fetch(DISCORD_CHANNEL_IDPATREON);
-      const roleId = "110080187786987576";
-
-      const emojiCrown = "<a:YellowCrown:1323735636913422347>";
-      const emojiHearts = "<a:hearts:1320778528781897748>";
-
-      // 🎯 Message custom Patreon
-      const rawMessage = `<@&${roleId}>
-# Today's Patreon set has been published! ${emojiHearts}
-# ${emojiCrown} ${post.title}
-*Full set on Patreon now!:*
-Check out the post and support:
-- ${post.url}`;
-
-      // Nettoyage du message
-      const clean = (str) => str.normalize("NFKC").replace(/^[ \t]+/gm, "");
-      const messageContent = clean(rawMessage);
-
-      // Envoi sur Discord
-      await channel.send({
-        content: messageContent,
-        embeds: [
-          {
-            title: post.title,
-            description: `[Voir le post sur Patreon](${post.url})\n\n${post.content}`,
-            image: { url: post.image },
-            color: 0xff66cc,
-          },
-        ],
-      });
-
-      console.log(`[Patreon] Post publié : ${post.url}`);
-    } else {
-      console.log(`[Patreon] Aucun nouveau post.`);
-    }
-  } catch (err) {
-    console.error("[Patreon] Erreur :", err);
-  }
-}
-  
-
 //********* ✅ Démarrage du bot *********/
 client.once("ready", () => {
   console.log(`✅ Connecté en tant que ${client.user.tag}`);
@@ -209,7 +145,6 @@ client.once("ready", () => {
           `⏰ Check des tweets à ${hour}h${minute < 10 ? "0" + minute : minute}`
         );
         checkForNewTweets();
-        /*checkForNewPatreonPosts(); */
         lastCheckedKey = key;
         matched = true;
       }
